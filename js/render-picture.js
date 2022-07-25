@@ -13,8 +13,7 @@ const renderPictures = (pictures) => {
   pictures.forEach((picture) => {
     const pictureElement = randonPicturesTemplate.cloneNode(true);
     pictureElement.querySelector('.picture__img').src = picture.url;
-    pictureElement.querySelector('.picture__likes').textContent =
-      picture.picturelikes;
+    pictureElement.querySelector('.picture__likes').textContent = picture.likes;
     pictureElement.querySelector('.picture__comments').textContent =
       picture.comments.length;
     pictureElement

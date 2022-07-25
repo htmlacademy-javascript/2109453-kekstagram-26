@@ -14,6 +14,7 @@ const overlay = document.querySelector('.img-upload__overlay');
 const scaleControlWrapper = document.querySelector('.scale');
 const scaleValueElement = document.querySelector('.scale__control--value');
 const previewImageElement = document.querySelector('.img-upload__preview img');
+const effectsPreview = document.querySelectorAll('.effects__preview');
 const successMessageTemplate = document.querySelector('#success').content;
 const successMessageElement = successMessageTemplate.cloneNode(true);
 const errorMessageTemplate = document.querySelector('#error').content;
@@ -81,7 +82,7 @@ const closeFormSubmit = () => {
   previewImageElement.style.transform = `scale(${number.value / 100})`;
   previewImageElement.style.filter = '';
   sliderElementWrapper.style.display = 'none';
-  document.querySelector('.img-upload__control').style.display = 'none';
+  uploadButtonElement.value = '';
   closeButtonElement.removeEventListener('click', closeForm);
   document.removeEventListener('keydown', closeForm);
   scaleControlWrapper.removeEventListener('click', scaleControlHandler);
@@ -95,6 +96,9 @@ const showForm = () => {
 
   if (matches) {
     previewImageElement.src = URL.createObjectURL(file);
+    effectsPreview.forEach((element) => {
+      element.style.backgroundImage = `url(${URL.createObjectURL(file)})`;
+    });
   }
 
   scaleValueElement.value = number.value + number.percent;
@@ -133,6 +137,7 @@ const setPhotoFormSubmit = (onSuccess) => {
         () => {
           onSuccess();
           formElement.reset();
+          uploadButtonElement.value = '';
           closeFormSubmit();
           document.querySelector('.success').style.display = 'flex';
           document
@@ -140,6 +145,7 @@ const setPhotoFormSubmit = (onSuccess) => {
             .addEventListener('click', () => {
               document.querySelector('.success').style.display = 'none';
             });
+          toggleDisabled(submitButton);
           document.addEventListener('keydown', closeSuccessModal);
           document.addEventListener('click', closeSuccessModal);
         },
