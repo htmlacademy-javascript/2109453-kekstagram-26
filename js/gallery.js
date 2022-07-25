@@ -19,12 +19,7 @@ const showComments = (elements) => {
       elements.length)}</span> комментариев`;
     commentCount.innerHTML = commentCountOver;
     commentLoader.classList.add('hidden');
-  } else {
-    const commentCountText = `${commentsEnd} из <span class="comments-count">${(commentCountNumber.textContent =
-      elements.length)}</span> комментариев`;
-    commentCount.innerHTML = commentCountText;
   }
-
   const newArr = elements.slice(commentsStart, commentsEnd);
   newArr.forEach((element) => {
     commentList.insertAdjacentHTML(

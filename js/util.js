@@ -10,13 +10,7 @@ const getRandomNotRepeated = (max) => {
   for (let i = 0; i <= max; i++) {
     randomNumbers.push(i);
   }
-  return () =>
-    Number(
-      randomNumbers.splice(
-        getRandomPositiveInteger(0, randomNumbers.length - 1),
-        1
-      )
-    );
+  return () => Number(randomNumbers.splice(getRandomPositiveInteger(0, randomNumbers.length - 1), 1));
 };
 
 const checkStringLength = (string, length) => string.length <= length;
@@ -52,19 +46,10 @@ const debounce = (callback, timeoutDelay = 500) => {
   };
 };
 
-const toggleDisabled = (button) => {
-  if (!button.disabled) {
-    button.disabled = true;
-  } else {
-    button.disabled = false;
-  }
-};
-
 export {
   getRandomPositiveInteger,
   getRandomNotRepeated,
   checkStringLength,
   showAlert,
   debounce,
-  toggleDisabled,
 };
