@@ -52,19 +52,10 @@ const debounce = (callback, timeoutDelay = 500) => {
   };
 };
 
-const toggleDisabled = (button) => {
-  if (!button.disabled) {
-    button.disabled = true;
-  } else {
-    button.disabled = false;
-  }
-};
-
 export {
   getRandomPositiveInteger,
   getRandomNotRepeated,
   checkStringLength,
   showAlert,
   debounce,
-  toggleDisabled,
 };

@@ -2,7 +2,7 @@ import { previewImageElement } from './form.js';
 
 const sliderElement = document.querySelector('.effect-level__slider');
 const sliderElementWrapper = document.querySelector('.effect-level');
-const effectfilterList = document.querySelectorAll('.effects__radio');
+const effectFilterList = document.querySelectorAll('.effects__radio');
 const effectValueElement = document.querySelector('.effect-level__value');
 
 sliderElementWrapper.style.display = 'none';
@@ -101,7 +101,7 @@ const changeEffect = (value) => {
   }
 };
 
-effectfilterList.forEach((item) => {
+effectFilterList.forEach((item) => {
   item.addEventListener('change', (e) => {
     changeEffect(e.target.value);
   });
@@ -111,4 +111,4 @@ sliderElement.noUiSlider.on('update', () => {
   effectValueElement.value = sliderElement.noUiSlider.get();
 });
 
-export { sliderElementWrapper };
+export { sliderElementWrapper, effectFilterList };

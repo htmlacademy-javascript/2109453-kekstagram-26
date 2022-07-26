@@ -5,8 +5,14 @@ import {
   textDescriptionElement,
 } from './pristine-utils.js';
 import { sendData } from './api.js';
-import { sliderElementWrapper } from './change-effect.js';
-import { toggleDisabled } from './util.js';
+import { sliderElementWrapper, effectFilterList } from './change-effect.js';
+
+const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
+const SCALE_STEP = 25;
+const MIN_SCALE = 25;
+const MAX_SCALE = 100;
+let scaleValue = 100;
 
 const uploadButtonElement = document.querySelector('#upload-file');
 const closeButtonElement = document.querySelector('#upload-cancel');
@@ -21,28 +27,44 @@ const errorMessageTemplate = document.querySelector('#error').content;
 const errorMessageElement = errorMessageTemplate.cloneNode(true);
 const submitButton = document.querySelector('.img-upload__submit');
 
-const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-
 document.body.appendChild(successMessageElement);
 document.body.appendChild(errorMessageElement);
 
 document.querySelector('.error').style.display = 'none';
 document.querySelector('.success').style.display = 'none';
 
-const number = { value: 100, percent: '%' };
-
 const scaleControlHandler = (evt) => {
   if (evt.target.classList.contains('scale__control--bigger')) {
-    if (number.value < 100) {
-      number.value += 25;
+    if (scaleValue < MAX_SCALE) {
+      scaleValue += SCALE_STEP;
     }
   } else if (evt.target.classList.contains('scale__control--smaller')) {
-    if (number.value > 25) {
-      number.value -= 25;
+    if (scaleValue > MIN_SCALE) {
+      scaleValue -= SCALE_STEP;
     }
   }
-  scaleValueElement.value = number.value + number.percent;
-  previewImageElement.style.transform = `scale(${number.value / 100})`;
+  scaleValueElement.value = `${scaleValue}%`;
+  previewImageElement.style.transform = `scale(${scaleValue / 100})`;
+};
+
+const clearEffectRadio = () => {
+  for (let i = 1; i < effectFilterList.length; i++) {
+    effectFilterList[i].checked = false;
+  }
+  effectFilterList[0].checked = true;
+};
+
+const resetForm = () => {
+  overlay.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+  uploadButtonElement.value = '';
+  scaleValue = 100;
+  scaleValueElement.value = `${scaleValue}%`;
+  previewImageElement.style.transform = 'scale(1)';
+  previewImageElement.style.filter = '';
+  sliderElementWrapper.style.display = 'none';
+  clearEffectRadio();
+  scaleControlWrapper.removeEventListener('click', scaleControlHandler);
 };
 
 const closeForm = (evt) => {
@@ -51,44 +73,20 @@ const closeForm = (evt) => {
     textDescriptionElement === document.activeElement
   ) {
     evt.stopPropagation();
-  } else {
-    if (evt.key === 'Escape') {
-      overlay.classList.add('hidden');
-      document.body.classList.remove('modal-open');
-      closeButtonElement.removeEventListener('click', closeForm);
-      document.removeEventListener('keydown', closeForm);
-      scaleControlWrapper.removeEventListener('click', scaleControlHandler);
-    } else if (evt.target === closeButtonElement) {
-      overlay.classList.add('hidden');
-      document.body.classList.remove('modal-open');
-      uploadButtonElement.value = '';
-      number.value = 100;
-      scaleValueElement.value = number.value + number.percent;
-      previewImageElement.style.transform = `scale(${number.value / 100})`;
-      sliderElementWrapper.style.display = 'none';
-      closeButtonElement.removeEventListener('click', closeForm);
-      document.removeEventListener('keydown', closeForm);
-      scaleControlWrapper.removeEventListener('click', scaleControlHandler);
-    }
+  } else if (evt.key === 'Escape' || evt.target === closeButtonElement) {
+    resetForm();
+    closeButtonElement.removeEventListener('click', closeForm);
+    document.removeEventListener('keydown', closeForm);
   }
 };
 
 const closeFormSubmit = () => {
-  overlay.classList.add('hidden');
-  document.body.classList.remove('modal-open');
-  uploadButtonElement.value = '';
-  number.value = 100;
-  scaleValueElement.value = number.value + number.percent;
-  previewImageElement.style.transform = `scale(${number.value / 100})`;
-  previewImageElement.style.filter = '';
-  sliderElementWrapper.style.display = 'none';
-  uploadButtonElement.value = '';
-  closeButtonElement.removeEventListener('click', closeForm);
-  document.removeEventListener('keydown', closeForm);
-  scaleControlWrapper.removeEventListener('click', scaleControlHandler);
+  resetForm();
 };
 
 const showForm = () => {
+  scaleValueElement.value = `${scaleValue}%`;
+
   const file = uploadButtonElement.files[0];
   const fileName = file.name.toLowerCase();
 
@@ -101,7 +99,6 @@ const showForm = () => {
     });
   }
 
-  scaleValueElement.value = number.value + number.percent;
   overlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
   closeButtonElement.addEventListener('click', closeForm);
@@ -128,9 +125,9 @@ const closeErrorModal = (evt) => {
 
 const setPhotoFormSubmit = (onSuccess) => {
   formElement.addEventListener('submit', (evt) => {
+    submitButton.disabled = true;
     document.removeEventListener('keydown', closeForm);
     evt.preventDefault();
-    toggleDisabled(submitButton);
     const isValid = pristine.validate();
     if (isValid) {
       sendData(
@@ -145,12 +142,12 @@ const setPhotoFormSubmit = (onSuccess) => {
             .addEventListener('click', () => {
               document.querySelector('.success').style.display = 'none';
             });
-          toggleDisabled(submitButton);
           document.addEventListener('keydown', closeSuccessModal);
           document.addEventListener('click', closeSuccessModal);
+          submitButton.disabled = false;
         },
         () => {
-          toggleDisabled(submitButton);
+          submitButton.disabled = false;
           document.querySelector('.error').style.zIndex = 5;
           document.querySelector('.error').style.display = 'flex';
           document
@@ -163,6 +160,8 @@ const setPhotoFormSubmit = (onSuccess) => {
         },
         new FormData(evt.target)
       );
+    } else {
+      submitButton.disabled = false;
     }
   });
 };

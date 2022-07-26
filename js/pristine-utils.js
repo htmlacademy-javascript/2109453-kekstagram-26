@@ -1,13 +1,13 @@
 import { checkStringLength } from './util.js';
 
-const formElement = document.querySelector('#upload-select-image');
-const textDescriptionElement = document.querySelector('.text__description');
-const hashtagInputElement = document.querySelector('.text__hashtags');
-
 const HASHTAG_REGEX = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 const HASHTAG_QUANTITY_MAX = 5;
 const HASHTAG_LENGTH_MAX = 20;
 const DESCRIPTION_MAX = 140;
+
+const formElement = document.querySelector('#upload-select-image');
+const textDescriptionElement = document.querySelector('.text__description');
+const hashtagInputElement = document.querySelector('.text__hashtags');
 
 const errorMessages = {
   accuracy:
@@ -36,12 +36,8 @@ const checkAccuracy = (array) => {
   return hashtags.every((item) => HASHTAG_REGEX.test(item));
 };
 
-const checkQuantity = (array) => {
-  if (getHashtags(array).length <= HASHTAG_QUANTITY_MAX) {
-    return true;
-  }
-  return false;
-};
+const checkQuantity = (array) =>
+  getHashtags(array).length <= HASHTAG_QUANTITY_MAX;
 
 const checkUniqueness = (array) => {
   const hashtags = getHashtags(array);

@@ -1,13 +1,15 @@
 import { showPicture } from './gallery.js';
 import { getData } from './api.js';
 import { showAlert, debounce, getRandomNotRepeated } from './util.js';
+
+const RANDOM_PHOTO_COUNT = 10;
+
 const randonPicturesFragment = document.createDocumentFragment();
 const randonPicturesTemplate = document.querySelector('#picture').content;
 const picturesElement = document.querySelector('.pictures');
 const filterContainer = document.querySelector('.img-filters__form');
 const filterButtons = document.querySelectorAll('.img-filters__button');
 const picturesList = [];
-const RANDOM_PHOTO_COUNT = 10;
 
 const renderPictures = (pictures) => {
   pictures.forEach((picture) => {
